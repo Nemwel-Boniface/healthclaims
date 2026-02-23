@@ -33,23 +33,7 @@ class UserManager(BaseUserManager):
     def create_user(
         self, username: str, email: str, password: str, **kwargs: Any
     ) -> Any:
-        kwargs.setdefault("is_staff", False)
-        kwargs.setdefault("is_superuser", False)
-        return self._create_user(username, email, password, **kwargs)
-    
-    def create_superuser(
-        self, username: str, email: str, password: str, **kwargs: Any
-    ) -> Any:
         kwargs.setdefault("is_staff", True)
-        kwargs.setdefault("is_superuser", True)
-        
-        if not password:
-            raise ValueError("Password is required")
-        if kwargs.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if kwargs.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-        
         return self._create_user(username, email, password, **kwargs)
 
 
