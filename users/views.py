@@ -4,7 +4,7 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,6 +22,8 @@ class UserRegisterView(APIView):
     """
     Register a new user and return JWT tokens.
     """
+    # Overriding global permission to allow public access for onboarding
+    permission_classes = [AllowAny] 
     
     def post(self, request: Request, format: str = "json") -> Response:
         serializer = UserSerializer(
@@ -42,6 +44,8 @@ class LoginView(APIView):
     """
     Custom login view that returns user details along with tokens.
     """
+    # Overriding global permission so users can exchange credentials for a token
+    permission_classes = [AllowAny]
     
     def post(self, request: Request) -> Response:
         email = request.data.get('email')
@@ -53,6 +57,7 @@ class LoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # Note: 'username' is mapped to email in our custom User model logic
         user = authenticate(username=email, password=password)
         
         if user is None:
@@ -84,6 +89,7 @@ class LogoutView(GenericAPIView):
     Logout user by blacklisting their refresh token.
     """
     serializer_class = LogoutSerializer
+    # This remains IsAuthenticated because you must be logged in to log out
     permission_classes = (IsAuthenticated,)
     
     def post(self, request: Request) -> Response:
