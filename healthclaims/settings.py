@@ -67,7 +67,27 @@ WSGI_APPLICATION = 'healthclaims.wsgi.application'
 
 # Database
 db_config = dj_database_url.config(default=config("DATABASE_URL"))
-DATABASES = {"default": db_config}
+
+# 1. Try to get the DATABASE_URL from the environment (Docker/Production)
+# 2. If it's not there, it falls back to your local manual config
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(default=DATABASE_URL)
+    }
+else:
+    # This is your original local config
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "healthclaims",
+            "USER": "rhino",
+            "PASSWORD": "your_password",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
