@@ -12,7 +12,7 @@ import os # Added for log path management
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY='django-insecure-$5w1q%y$vv3vx5n80n!2g!g&v@6a(+vhocl90p&jf=ok*h^@w+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
