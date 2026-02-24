@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,11 +7,8 @@ from .models import Claim
 
 class ClaimCreateView(generics.CreateAPIView):
     """
-    API endpoint that allows hospitals/providers to submit a new health claim.
-    
-    Attributes of this view:
-        permission_classes: Ensures only authenticated staff can submit claims.
-        serializer_class: Uses the ClaimRequestSerializer to validate incoming JSON data.
+    Entry point for new claim submissions.
+    Extracts idempotency headers and orchestrates with the Service Layer.
     """
     permission_classes = [IsAuthenticated]
     serializer_class = ClaimRequestSerializer
@@ -29,11 +25,16 @@ class ClaimCreateView(generics.CreateAPIView):
         # Trigger validation; raises 400 Bad Request if data is malformed
         serializer.is_valid(raise_exception=True)
         
-        # Hand off to the Service Layer (The Brain) for adjudication
-        # **serializer.validated_data unpacks keys as arguments to the service
-        claim = ClaimProcessorService.process(**serializer.validated_data)
+        # Capture the safety key from headers
+        idempotency_key = request.headers.get('X-Idempotency-Key')
+
+        # Pass to service with user context for logging
+        claim = ClaimProcessorService.process(
+            **serializer.validated_data,
+            user_id=request.user.id,
+            idempotency_key=idempotency_key
+        )
         
-        # Return the processed claim using the response serializer
         return Response(
             ClaimResponseSerializer(claim).data, 
             status=status.HTTP_201_CREATED
