@@ -301,6 +301,34 @@ Run all tests: `sudo docker-compose exec web pytest` or `python manage.py test u
 8. Dockerized deployment
 
 
+## Future Considerations & Production Roadmap
+
+To transition this engine from a high-quality prototype to a globally scalable production service, I have identified the following strategic improvements:
+
+### 1. Distributed Locking & Advanced Idempotency
+While the current idempotency logic works for single-instance deployments, a production environment with multiple horizontally scaled containers would require **Redis-backed distributed locking**. This prevents "race conditions" where two identical requests hit different server instances at the exact same millisecond.
+
+### 2. Event-Driven Architecture (EDA)
+Currently, adjudication happens synchronously. For higher throughput, I would introduce **Celery with RabbitMQ or Redis** to:
+- Move logging and audit trail persistence to background tasks.
+- Send real-time notifications to members and providers via webhooks or email after claim finalization.
+
+### 3. Enhanced Fraud Detection with ML
+The current system uses rule-based fraud detection (e.g., 2x average cost flags). A production version would integrate a **Machine Learning inference layer** (using a service like AWS SageMaker or a dedicated microservice) to analyze historical patterns and identify complex fraud rings that simple rules might miss.
+
+### 4. Database Optimization & Partitioning
+As the "Claims" table grows into the millions:
+- **Database Partitioning**: Partitioning claims by `created_at` (monthly or yearly) to maintain query performance.
+- **Read Replicas**: Routing `GET` requests (Audit/View) to read-only replicas to preserve the primary database's write capacity for real-time adjudication.
+
+### 5. Security & Compliance (HIPAA/GDPR)
+- **PII Encryption**: Implementing field-level encryption for sensitive member data (Names, Diagnosis Codes) at rest.
+- **Audit Shield**: Transitioning from local structured logs to a centralized log management system (ELK Stack or Datadog) with immutable audit trails for compliance.
+
+### 6. API Versioning Strategy
+While we are currently on `/api/v1/`, a production roadmap would include a **header-based versioning strategy** to support legacy hospital integrations while rolling out breaking changes to the adjudication logic.
+
+
 ## Author
 
 👤 **Nemwel Boniface**
