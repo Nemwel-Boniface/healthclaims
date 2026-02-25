@@ -209,14 +209,17 @@ sudo docker-compose logs db
 
 
 ## API Endpoints & Usage
+Access the API at (Base URL): `http://127.0.0.1:8000/`. 
+> Examples shown below are copy paste ready for Postman.
+
 1. User Registration
 
-POST `/api/v1/auth/register/`
+POST `http://127.0.0.1:8000/api/v1/auth/register/`
 
 ```
 {
   "username": "nemwelb",
-  "email": "nemwel@ginja.ai",
+  "email": "nemwelb@healthclaims.ai",
   "password": "strongpassword123",
   "first_name": "Nemwel",
   "last_name": "Boniface"
@@ -225,11 +228,11 @@ POST `/api/v1/auth/register/`
 
 2. Login (Obtain JWT Token)
 
-POST `/api/v1/auth/login/`
+POST `http://127.0.0.1:8000/api/v1/auth/login/`
 
 ```
 {
-  "email": "nemwel@ginja.ai",
+  "email": "nemwelb@healthclaims.ai",
   "password": "strongpassword123"
 }
 ```
@@ -245,7 +248,7 @@ Response includes:
 
 3. Submit a Claim
 
-POST `/api/v1/claims/`
+POST `http://127.0.0.1:8000/api/v1/claims/`
 
 Headers:
 
@@ -259,11 +262,11 @@ Body:
 
 ```
 {
-  "member_id": "M123",
-  "provider_id": "H456",
-  "diagnosis_code": "D001",
-  "procedure_code": "P001",
-  "claim_amount": 5000.00
+    "member_id": "M123",
+    "provider_id": "H456",
+    "diagnosis_code": "D001",
+    "procedure_code": "P001",
+    "claim_amount": 15000.00
 }
 ```
 
@@ -271,10 +274,39 @@ Example Response:
 
 ```
 {
-  "claim_id": "C789",
-  "status": "APPROVED",
-  "fraud_flag": false,
-  "approved_amount": 40000
+    "id": "e323df8d-4616-4b5b-b5db-bb5535dbebae",
+    "claim_number": "CLN-1A1AC736",
+    "status": "APPROVED",
+    "fraud_flag": true,
+    "approved_amount": "15000.00",
+    "comment": "Flagged: Requested amount is highly suspicious (Exceeds 2x average cost)."
+}
+```
+
+3. Get a Claim
+
+GET `/api/v1/claims/<claim-id>`
+
+Headers:
+
+```
+Authorization: Bearer <your_access_token>
+X-Idempotency-Key: <unique_uuid_or_string>
+Content-Type: application/json
+```
+
+Example GET `http://127.0.0.1:8000/api/v1/claims/e323df8d-4616-4b5b-b5db-bb5535dbebae`
+
+Example Response:
+
+```
+{
+    "id": "e323df8d-4616-4b5b-b5db-bb5535dbebae",
+    "claim_number": "CLN-1A1AC736",
+    "status": "APPROVED",
+    "fraud_flag": true,
+    "approved_amount": "15000.00",
+    "comment": "Flagged: Requested amount is highly suspicious (Exceeds 2x average cost)."
 }
 ```
 
@@ -309,7 +341,7 @@ To transition this engine from a high-quality prototype to a globally scalable p
 While the current idempotency logic works for single-instance deployments, a production environment with multiple horizontally scaled containers would require **Redis-backed distributed locking**. This prevents "race conditions" where two identical requests hit different server instances at the exact same millisecond.
 
 ### 2. Event-Driven Architecture (EDA)
-Currently, adjudication happens synchronously. For higher throughput, I would introduce **Celery with RabbitMQ or Redis** to:
+Currently, adjudication happens synchronously. For higher throughput, I would introduce **Redis** to:
 - Move logging and audit trail persistence to background tasks.
 - Send real-time notifications to members and providers via webhooks or email after claim finalization.
 
