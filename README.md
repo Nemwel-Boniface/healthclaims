@@ -57,6 +57,24 @@ The system uses structured logging to track the lifecycle of a claim. Every adju
 
 ---
 
+---
+
+## 📺 Video Walkthrough & Demo
+
+Click the image below to watch a **5-minute technical demonstration** of the Health Claims Adjudication Engine, covering the architecture, the "Brain" (Service Layer), and a live demo of the Idempotency and Fraud Detection features.
+
+[Health Claims Demo Video](https://www.loom.com/share/4bcf3c12af804d7da93c3216893e041f)
+
+> **In this video:**
+> - **Architecture Overview**: Deep dive into the Indempotency, Service Layer and Gateway Pattern.
+> - **Live Demo**: Submitting claims via Postman, getting info about a claim.
+> - **Idempotency in Action**: Proving the system prevents duplicate financial transactions.
+> - **Automated Testing**: Running the Pytest suite inside Docker.
+> - **Rate Limiting**: Prevention of DDOS.
+> - **Project Documentation**: Overview of the README.md file.
+
+---
+
 # Built With
 
 - Python 3.12
