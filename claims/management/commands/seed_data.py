@@ -5,6 +5,7 @@ class Command(BaseCommand):
     help = 'Seeds diverse scenarios for Ginja AI Claims Demo Adjudication'
 
     def handle(self, *args, **kwargs):
+        # All monetary values in this seed data are in Kenyan Shillings (KES).
         self.stdout.write("Cleaning existing records...")
         Member.objects.all().delete()
         Provider.objects.all().delete()
@@ -26,7 +27,7 @@ class Command(BaseCommand):
         Provider.objects.create(provider_code="H456", name="Aga Khan University Hospital")
 
         # PROCEDURES
-        Procedure.objects.create(code="P001", name="Dental Surgery", average_cost=5000.00) # Threshold for fraud: 10k
+        Procedure.objects.create(code="P001", name="Dental Surgery", average_cost=5000.00) # Threshold for fraud: KES 10k
         Procedure.objects.create(code="P002", name="Consultation", average_cost=1500.00)
 
         self.stdout.write(self.style.SUCCESS('Successfully seeded all Adjudication Scenarios!'))

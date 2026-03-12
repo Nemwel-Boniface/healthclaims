@@ -292,7 +292,7 @@ Below are sample payloads that demonstrate different adjudication outcomes in th
 ### 1. The "Happy Path" (Full Approval)
 
 **Target:**  
-Member **M123** ($50k balance), Procedure **P001** ($5k average cost).
+Member **M123** (KES 50k balance), Procedure **P001** (KES 5k average cost).
 
 **JSON Payload**
 
@@ -317,7 +317,7 @@ Member **M123** ($50k balance), Procedure **P001** ($5k average cost).
 ### 2. The "Fraud Trigger" (Suspicious Amount)
 
 **Target:**  
-Procedure **P001** has an average cost of **$5k**. Submitting **$15k** (> 2x average) triggers the fraud rule.
+Procedure **P001** has an average cost of **KES 5k**. Submitting **KES 15k** (> 2x average) triggers the fraud rule.
 
 **JSON Payload**
 
@@ -342,7 +342,7 @@ Procedure **P001** has an average cost of **$5k**. Submitting **$15k** (> 2x ave
 ### 3. The "Partial Approval" (Balance Cap)
 
 **Target:**  
-Member **M555** only has **$2,000** remaining balance. Submitting a **$5,000** claim triggers partial approval.
+Member **M555** only has **KES 2,000** remaining balance. Submitting a **KES 5,000** claim triggers partial approval.
 
 **JSON Payload**
 
@@ -359,8 +359,8 @@ Member **M555** only has **$2,000** remaining balance. Submitting a **$5,000** c
 **Expectation**
 
 - Status: **PARTIAL**
-- Approved Amount: **$2000.00**
-- Member balance becomes **$0.00** after adjudication.
+- Approved Amount: **KES 2000.00**
+- Member balance becomes **KES 0.00** after adjudication.
 
 ---
 
