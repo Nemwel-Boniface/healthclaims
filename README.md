@@ -283,6 +283,137 @@ Example Response:
 }
 ```
 
+## Claim Processing Test Scenarios
+
+Below are sample payloads that demonstrate different adjudication outcomes in the claims processing engine.
+
+---
+
+### 1. The "Happy Path" (Full Approval)
+
+**Target:**  
+Member **M123** ($50k balance), Procedure **P001** ($5k average cost).
+
+**JSON Payload**
+
+```json
+{
+  "member_id": "M123",
+  "provider_id": "H456",
+  "diagnosis_code": "D001",
+  "procedure_code": "P001",
+  "claim_amount": 4500.00
+}
+```
+
+**Expectation**
+
+- Status: **APPROVED**
+- Fraud Flag: **False**
+- Balance deducted from member's benefit balance.
+
+---
+
+### 2. The "Fraud Trigger" (Suspicious Amount)
+
+**Target:**  
+Procedure **P001** has an average cost of **$5k**. Submitting **$15k** (> 2x average) triggers the fraud rule.
+
+**JSON Payload**
+
+```json
+{
+  "member_id": "M123",
+  "provider_id": "H456",
+  "diagnosis_code": "D001",
+  "procedure_code": "P001",
+  "claim_amount": 15000.00
+}
+```
+
+**Expectation**
+
+- Status: **APPROVED**
+- Fraud Flag: **True**
+- Comment mentions **suspicious cost exceeding 2x the average**.
+
+---
+
+### 3. The "Partial Approval" (Balance Cap)
+
+**Target:**  
+Member **M555** only has **$2,000** remaining balance. Submitting a **$5,000** claim triggers partial approval.
+
+**JSON Payload**
+
+```json
+{
+  "member_id": "M555",
+  "provider_id": "H456",
+  "diagnosis_code": "D001",
+  "procedure_code": "P001",
+  "claim_amount": 5000.00
+}
+```
+
+**Expectation**
+
+- Status: **PARTIAL**
+- Approved Amount: **$2000.00**
+- Member balance becomes **$0.00** after adjudication.
+
+---
+
+### 4. The "Inactive Member" (Eligibility Failure)
+
+**Target:**  
+Member **M999** has `is_active = false`.
+
+**JSON Payload**
+
+```json
+{
+  "member_id": "M999",
+  "provider_id": "H456",
+  "diagnosis_code": "D001",
+  "procedure_code": "P001",
+  "claim_amount": 1000.00
+}
+```
+
+**Expectation**
+
+- Status: **REJECTED**
+- Comment: `"Member policy is currently inactive."`
+
+---
+
+### 5. The "Idempotency Safety" (Duplicate Request Protection)
+
+**Action:**  
+Send **Scenario #1** twice using the exact same header.
+
+**Header**
+
+```
+X-Idempotency-Key: demo-key-001
+```
+
+**Expectation**
+
+- **1st Request**
+  - New claim created.
+  - HTTP Status: **201 Created**
+  - Member balance is deducted.
+
+- **2nd Request**
+  - Returns the **exact same claim record** from the database.
+  - No new `CLN-` claim number is created.
+  - Member balance **is not deducted again**.
+
+This demonstrates **idempotent request handling**, ensuring duplicate submissions (e.g., due to retries or network failures) do not create duplicate financial transactions.
+
+
 3. Get a Claim
 
 GET `/api/v1/claims/<claim-id>`
