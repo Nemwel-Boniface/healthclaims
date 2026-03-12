@@ -312,6 +312,8 @@ Member **M123** (KES 50k balance), Procedure **P001** (KES 5k average cost).
 - Fraud Flag: **False**
 - Balance deducted from member's benefit balance.
 
+<img width="787" height="387" alt="image" src="https://github.com/user-attachments/assets/fe017824-4854-4331-889f-c3866ac0696b" />
+
 ---
 
 ### 2. The "Fraud Trigger" (Suspicious Amount)
@@ -336,6 +338,8 @@ Procedure **P001** has an average cost of **KES 5k**. Submitting **KES 15k** (> 
 - Status: **APPROVED**
 - Fraud Flag: **True**
 - Comment mentions **suspicious cost exceeding 2x the average**.
+
+<img width="787" height="387" alt="image" src="https://github.com/user-attachments/assets/585ff4d5-e5a7-4a00-a34f-d299199dea84" />
 
 ---
 
@@ -362,6 +366,8 @@ Member **M555** only has **KES 2,000** remaining balance. Submitting a **KES 5,0
 - Approved Amount: **KES 2000.00**
 - Member balance becomes **KES 0.00** after adjudication.
 
+<img width="787" height="384" alt="image" src="https://github.com/user-attachments/assets/d75dc167-0d24-4cca-97b7-056db081e567" />
+
 ---
 
 ### 4. The "Inactive Member" (Eligibility Failure)
@@ -385,6 +391,8 @@ Member **M999** has `is_active = false`.
 
 - Status: **REJECTED**
 - Comment: `"Member policy is currently inactive."`
+
+<img width="787" height="383" alt="image" src="https://github.com/user-attachments/assets/480c50d5-3f06-48f9-8a55-a188fcd24994" />
 
 ---
 
